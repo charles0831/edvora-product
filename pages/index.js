@@ -1,13 +1,8 @@
-import Head from "next/head";
 import styles from "styles/Home.module.css";
-import Link from "next/link";
-import Image from "next/image";
 import Api from "api/api";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import ReactLoading from "react-loading";
-import moment from "moment";
-import mockupdata from "components/data";
 import ProductCard from "components/ProductCard";
 import SelectBox from "components/SelectBox";
 
@@ -23,39 +18,38 @@ export default function Home() {
   const [productStateList, setProductStateList] = useState([]);
   const [productCityList, setProductCityList] = useState([]);
 
-  // useEffect(() => {
-  //   setProgressStatus(true);
-  //   Api.getProducts()
-  //     .then((response) => {
-  //       setProducts(response);
-  //       setProgressStatus(false);
-  //     })
-  //     .catch((err) => {
-  //       console.error(err);
-  //       setProgressStatus(false);
-  //       toast.error(err.message);
-  //     });
-  // }, []);
+  useEffect(() => {
+    setProgressStatus(true);
+    Api.getProducts()
+      .then((response) => {
+        setProducts(response);
+
+        let nameArr = response.map(function (item) {
+          return item.product_name;
+        });
+        let stateArr = response.map(function (item) {
+          return item.address.state;
+        });
+        let cityArr = response.map(function (item) {
+          return item.address.city;
+        });
+
+        setProductNameList(nameArr.filter(onlyUnique));
+        setProductStateList(stateArr.filter(onlyUnique));
+        setProductCityList(cityArr.filter(onlyUnique));
+
+        setProgressStatus(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setProgressStatus(false);
+        toast.error(err.message);
+      });
+  }, []);
 
   const onlyUnique = (value, index, self) => {
     return self.indexOf(value) === index;
   };
-
-  useEffect(() => {
-    let nameArr = mockupdata.map(function (item) {
-      return item.product_name;
-    });
-    let stateArr = mockupdata.map(function (item) {
-      return item.address.state;
-    });
-    let cityArr = mockupdata.map(function (item) {
-      return item.address.city;
-    });
-
-    setProductNameList(nameArr.filter(onlyUnique));
-    setProductStateList(stateArr.filter(onlyUnique));
-    setProductCityList(cityArr.filter(onlyUnique));
-  }, []);
 
   const handleChangeSelect = (e, type) => {
     if (type === "productName") {
@@ -72,7 +66,7 @@ export default function Home() {
   useEffect(() => {
     let _products = [];
     if (productName !== "" && productState !== "" && productCity !== "") {
-      mockupdata.map((item) => {
+      products.map((item) => {
         if (
           item.product_name === productName &&
           item.address.state === productState &&
@@ -83,7 +77,7 @@ export default function Home() {
       });
     }
     if (productName !== "" && productState !== "" && productCity === "") {
-      mockupdata.map((item) => {
+      products.map((item) => {
         if (
           item.product_name === productName &&
           item.address.state === productState
@@ -93,14 +87,14 @@ export default function Home() {
       });
     }
     if (productName !== "" && productState === "" && productCity === "") {
-      mockupdata.map((item) => {
+      products.map((item) => {
         if (item.product_name === productName) {
           _products.push(item);
         }
       });
     }
     if (productName === "" && productState !== "" && productCity !== "") {
-      mockupdata.map((item) => {
+      products.map((item) => {
         if (
           item.address.state === productState &&
           item.address.city === productCity
@@ -110,21 +104,21 @@ export default function Home() {
       });
     }
     if (productName === "" && productState !== "" && productCity === "") {
-      mockupdata.map((item) => {
+      products.map((item) => {
         if (item.address.state === productState) {
           _products.push(item);
         }
       });
     }
     if (productName === "" && productState === "" && productCity !== "") {
-      mockupdata.map((item) => {
+      products.map((item) => {
         if (item.address.city === productCity) {
           _products.push(item);
         }
       });
     }
     if (productName === "" && productState === "" && productCity === "") {
-      mockupdata.map((item) => {
+      products.map((item) => {
         _products.push(item);
       });
     }

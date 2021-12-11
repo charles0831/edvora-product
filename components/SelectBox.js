@@ -1,6 +1,4 @@
 import styles from "styles/Home.module.css";
-import Image from "next/image";
-import moment from "moment";
 
 const SelectBox = (props) => {
   const { list, value, handleChange } = props;
